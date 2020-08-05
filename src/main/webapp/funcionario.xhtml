@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="_template.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="funcionarioId"
+			value="#{funcionarioBean.funcionario.id}" />
+		<f:viewAction action="#{funcionarioBean.carregarFuncionarioPelaId}"
+			if="#{param.funcionarioId != null}" />
+	</f:metadata>
+
+	<ui:define name="titulo">
+		<p:outputPanel>Funcionários</p:outputPanel>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<p:fieldset legend="Dados do Funcionário">
+			<p:panelGrid columns="2">
+				<h:form id="formfun">
+					<div class="ui-fluid">
+						<div class="p-field">
+							<p:outputLabel for="nome" value="Nome Funcionario" />
+							<p:inputText id="nome"
+								value="#{funcionarioBean.funcionario.nome}" required="true"
+								requiredMessage="Nome obrigatório" />
+						</div>
+						<div class="p-field">
+							<p:outputLabel for="cpf" value="CPF" />
+							<p:inputMask id="cpf" value="#{funcionarioBean.funcionario.cpf}"
+								mask="999.999.999-99"  required="true"
+								requiredMessage="CPF obrigatório"/>
+						</div>
+						<div class="p-field">
+							<p:outputLabel for="vendas" value="Vendas" />
+							<p:inputText id="vendas"
+								value="#{funcionarioBean.funcionario.vendas}" />
+						</div>
+					</div>
+					<br />
+					<p:commandButton value="Gravar" action="#{funcionarioBean.gravar}"
+						process="@form"
+						update="@form :formTabelaFuncionarios:tabelaFuncionario" />
+
+				</h:form>
+			</p:panelGrid>
+		</p:fieldset>
+
+		<h:form id="formTabelaFuncionarios">
+			<p:dataTable value="#{funcionarioBean.funcionarios}"
+				var="funcionario" id="tabelaFuncionario" paginator="true" rows="6">
+				<f:facet name="header">Funcionario</f:facet>
+				<p:column headerText="Nome" sortBy="#{funcionario.nome}"
+					filterBy="#{funcionario.nome}" filterMatchMode="startsWith">
+					<h:outputText value="#{funcionario.nome}" />
+				</p:column>
+				<p:column headerText="CPF" sortBy="#{funcionario.cpf}">
+					<h:outputText value="#{funcionario.cpf}" />
+				</p:column>
+				<p:column headerText="Vendas" sortBy="#{funcionario.vendas}">
+					<h:outputText value="#{funcionario.vendas}">
+						<f:convertNumber type="currency" pattern="R$ #0.00"
+							currencySymbol="R$" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Alterar">
+					<p:commandButton update=":formfun" process="@this" value="alterar"
+						actionListener="#{funcionarioBean.carregar(funcionario)}"
+						icon="fa fa-fw fa-edit" />
+				</p:column>
+
+				<p:column headerText="Remover">
+					<p:commandButton update="@form" process="@this" value="remover"
+						actionListener="#{funcionarioBean.remover(funcionario)}"
+						icon="fa fa-fw fa-remove" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+
+</html>
